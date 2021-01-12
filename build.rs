@@ -86,6 +86,7 @@ impl GetPrimitive for HashMap<String, String> {
     }
 }
 
+#[derive(Debug)]
 struct CrossCompileConfig {
     lib_dir: PathBuf,
     include_dir: Option<PathBuf>,
@@ -130,8 +131,8 @@ impl CrossCompileConfig {
 }
 
 fn cross_compiling() -> Result<Option<CrossCompileConfig>> {
-    let target = env::var("TARGET")?;
-    let host = env::var("HOST")?;
+    let target = dbg!(env::var("TARGET"))?;
+    let host = dbg!(env::var("HOST"))?;
     if target == host {
         // Not cross-compiling
         return Ok(None);
@@ -153,7 +154,7 @@ fn cross_compiling() -> Result<Option<CrossCompileConfig>> {
         return Ok(None);
     }
 
-    if env::var("CARGO_CFG_TARGET_FAMILY")? == "windows" {
+    if dbg!(env::var("CARGO_CFG_TARGET_FAMILY"))? == "windows" {
         // Windows cross-compile uses both header includes and sysconfig
         return Ok(Some(CrossCompileConfig::both()?));
     }
@@ -865,7 +866,7 @@ fn main() -> Result<()> {
     //
     // Detecting if cross-compiling by checking if the target triple is different from the host
     // rustc's triple.
-    let (interpreter_config, mut build_flags) = if let Some(paths) = cross_compiling()? {
+    let (interpreter_config, mut build_flags) = if let Some(paths) = dbg!(cross_compiling())? {
         load_cross_compile_info(paths)?
     } else {
         find_interpreter_and_get_config()?
